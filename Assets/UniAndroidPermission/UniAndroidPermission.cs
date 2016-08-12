@@ -2,15 +2,19 @@
 using System;
 using System.Collections;
 
-#if UNITY_ANDROID
+
 public class UniAndroidPermission : MonoBehaviour {
 
     private static Action permitCallBack;
-    private static Action notPermitCallBack;
-    const string PackageClassName = "net.sanukin.PermissionManager";
-    AndroidJavaClass permissionManager;
+    private static Action<bool> notPermitCallBack;
 
-    void Awake(){
+#if UNITY_ANDROID
+	private const string PackageClassName = "net.sanukin.PermissionManager";
+    AndroidJavaClass permissionManager;
+#endif
+
+	public void Awake()
+	{
         DontDestroyOnLoad (gameObject);
     }
 
@@ -25,7 +29,7 @@ public class UniAndroidPermission : MonoBehaviour {
         return true;
     }
 
-    public static void RequestPremission(AndroidPermission permission, Action onPermit = null, Action notPermit = null){
+    public static void RequestPremission(AndroidPermission permission, Action onPermit = null, Action<bool> notPermit = null){
 #if UNITY_EDITOR
         Debug.LogWarning("UniAndroidPermission works only Androud Devices.");
         return;
@@ -37,25 +41,36 @@ public class UniAndroidPermission : MonoBehaviour {
 #endif
     }
 
-    private static string GetPermittionStr(AndroidPermission permittion){
+	private static string GetPermittionStr(AndroidPermission permittion){
         return "android.permission." + permittion.ToString ();
     }
 
-    private void OnPermit(){
+    private void OnPermit()
+	{
         if (permitCallBack != null) {
             permitCallBack ();
         }
         ResetCallBacks ();
     }
 
-    private void NotPermit(){
+    private void NotPermit()
+	{
         if (notPermitCallBack != null) {
-            notPermitCallBack ();
+            notPermitCallBack (false);
         }
         ResetCallBacks ();
     }
 
-    private void ResetCallBacks(){
+	private void NotPermitAlways()
+	{
+		if (notPermitCallBack != null)
+		{
+			notPermitCallBack(true);
+		}
+		ResetCallBacks();
+	}
+
+	private void ResetCallBacks(){
         notPermitCallBack = null;
         permitCallBack = null;
     }
@@ -89,4 +104,3 @@ public enum AndroidPermission{
     WRITE_CONTACTS,
     WRITE_EXTERNAL_STORAGE
 }
-#endif

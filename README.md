@@ -17,14 +17,9 @@ Use unitypackage under Distribution
 2 Add Custom Activity and SkipPermissionsDialog to Android Manifest
 
 ```
-<activity android:name=“net.sanukin.OverrideUnityActivity"
-         android:label="@string/app_name"
-         android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
-    <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-    </intent-filter>
-</activity>
+<activity 
+    android:name="net.sanukin.RequestPermissionActivity"
+    android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 <meta-data android:name="unityplayer.SkipPermissionsDialog" android:value="true" />
 ```
 
@@ -42,10 +37,15 @@ UniAndroidPermission.IsPermitted (AndroidPermission.WRITE_EXTERNAL_STORAGE)
 Request Permission by runtime permission
 
 ```cs
-UniAndroidPermission.RequestPremission (AndroidPermission.WRITE_EXTERNAL_STORAGE, () => {
-    // add permit action
-}, () => {
-    // add not permit action
+UniAndroidPermission.RequestPremission(AndroidPermission.WRITE_EXTERNAL_STORAGE, () =>
+{
+	Debug.Log("WRITE_EXTERNAL_STORAGE is permitted");
+}, (always) =>
+{
+	if (always)
+		Debug.LogWarning("WRITE_EXTERNAL_STORAGE is always denied");
+	else
+		Debug.LogWarning("WRITE_EXTERNAL_STORAGE is denied");
 });
 ```
 
