@@ -39,11 +39,13 @@ public class RequestPermissionActivity extends Activity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     UnityPlayer.UnitySendMessage("UniAndroidPermission", "OnPermit", "");
                 } else {
-                    boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0]);
-                    if (!showRationale) {
-                        UnityPlayer.UnitySendMessage("UniAndroidPermission", "NotPermitAlways", "");
-                    }  else {
-                        UnityPlayer.UnitySendMessage("UniAndroidPermission", "NotPermit", "");
+                    if (permissions.length > 0) {
+                        boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0]);
+                        if (!showRationale) {
+                            UnityPlayer.UnitySendMessage("UniAndroidPermission", "NotPermitAlways", "");
+                        } else {
+                            UnityPlayer.UnitySendMessage("UniAndroidPermission", "NotPermit", "");
+                        }
                     }
                 }
                 break;
