@@ -24,33 +24,37 @@ public class RequestPermissionActivity extends Activity {
 		Intent intent = getIntent();
 
 		String permissionStr = intent.getStringExtra(PERMISSION);
-		Log.d("DTI", "Requesting permission " + permissionStr);
+		Log.d("DTI", "Requesting permission permissionStr " + permissionStr);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.d("DTI", "Requesting permission Build.VERSION.SDK_INT" + Build.VERSION.SDK_INT);
 			requestPermissions(new String[]{permissionStr}, 0);
 		}
 	}
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-		
         switch (requestCode) {
             case 0: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    UnityPlayer.UnitySendMessage("UniAndroidPermission", "OnPermit", "");
+                    UnitySendMessage("OnPermit");
                 } else {
                     if (permissions.length > 0) {
                         boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0]);
                         if (!showRationale) {
-                            UnityPlayer.UnitySendMessage("UniAndroidPermission", "NotPermitAlways", "");
+                            UnitySendMessage("NotPermitAlways");
                         } else {
-                            UnityPlayer.UnitySendMessage("UniAndroidPermission", "NotPermit", "");
+                            UnitySendMessage("NotPermit");
                         }
                     }
                 }
                 break;
             }
         }
-		finish();
+    }
+
+    private void UnitySendMessage(String method) {
+        UnityPlayer.UnitySendMessage("UniAndroidPermission", method, "");
+        finish();
     }
 }
